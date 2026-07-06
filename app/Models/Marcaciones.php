@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class Marcaciones extends Model
 {
     use SoftDeletes;
@@ -15,6 +17,7 @@ class Marcaciones extends Model
         'empleado_id',
         'empleado_dispositivo_id',
         'empleado_autorizador_id',
+        'sucursal_id',
         'tipo',
         'fecha',
         'fecha_hora',
@@ -72,5 +75,10 @@ class Marcaciones extends Model
             Empleado::class,
             'empleado_autorizador_id'
         );
+    }
+
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class);
     }
 }

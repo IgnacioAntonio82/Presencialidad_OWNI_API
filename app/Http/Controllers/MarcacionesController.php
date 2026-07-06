@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
-
-use App\Models\Marcacion;
+use App\Models\Marcaciones;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -17,9 +15,10 @@ class MarcacionesController extends Controller
     {
         return response()->json(
 
-            Marcacion::with([
+            Marcaciones::with([
                 'empresa',
                 'empleado',
+                'sucursal',
                 'dispositivo',
                 'autorizador'
             ])->get()
@@ -87,6 +86,7 @@ class MarcacionesController extends Controller
             ],
 
             'origen' => [
+                'sometimes',
                 Rule::in([
                     'telegram',
                     'whatsapp',
@@ -97,10 +97,12 @@ class MarcacionesController extends Controller
             ],
 
             'es_manual' => [
+                'sometimes',
                 'boolean'
             ],
 
             'estado' => [
+                'sometimes',
                 Rule::in([
                     'pendiente',
                     'confirmada',
@@ -127,13 +129,14 @@ class MarcacionesController extends Controller
 
         ]);
 
-        $marcacion = Marcacion::create($datos);
+        $marcacion = Marcaciones::create($datos);
 
         return response()->json(
 
             $marcacion->load([
                 'empresa',
                 'empleado',
+                'sucursal',
                 'dispositivo',
                 'autorizador'
             ]),
@@ -146,13 +149,14 @@ class MarcacionesController extends Controller
     /**
      * Mostrar marcación.
      */
-    public function show(Marcacion $marcacion)
+    public function show(Marcaciones $marcacion)
     {
         return response()->json(
 
             $marcacion->load([
                 'empresa',
                 'empleado',
+                'sucursal',
                 'dispositivo',
                 'autorizador'
             ])
@@ -165,7 +169,7 @@ class MarcacionesController extends Controller
      */
     public function update(
         Request $request,
-        Marcacion $marcacion
+        Marcaciones $marcacion
     ) {
 
         $datos = $request->validate([
@@ -223,6 +227,7 @@ class MarcacionesController extends Controller
             ],
 
             'origen' => [
+                'sometimes',
                 Rule::in([
                     'telegram',
                     'whatsapp',
@@ -233,10 +238,12 @@ class MarcacionesController extends Controller
             ],
 
             'es_manual' => [
+                'sometimes',
                 'boolean'
             ],
 
             'estado' => [
+                'sometimes',
                 Rule::in([
                     'pendiente',
                     'confirmada',
@@ -270,6 +277,7 @@ class MarcacionesController extends Controller
             $marcacion->load([
                 'empresa',
                 'empleado',
+                'sucursal',
                 'dispositivo',
                 'autorizador'
             ])
@@ -280,7 +288,7 @@ class MarcacionesController extends Controller
     /**
      * Eliminar marcación.
      */
-    public function destroy(Marcacion $marcacion)
+    public function destroy(Marcaciones $marcacion)
     {
         $marcacion->delete();
 

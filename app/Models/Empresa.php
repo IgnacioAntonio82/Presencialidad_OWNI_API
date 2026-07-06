@@ -50,4 +50,19 @@ class Empresa extends Model
     {
         return $this->hasMany(EmpleadoDispositivo::class);
     }
+
+    public function horarios()
+    {
+        return $this->hasMany(Horario::class);
+    }
+
+    public function empleadoHorarios()
+    {
+        return $this->hasMany(EmpleadoHorario::class);
+    }
+
+   
+
+
+
 }

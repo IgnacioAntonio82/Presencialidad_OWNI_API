@@ -71,5 +71,31 @@ class Empleado extends Model
         return $this->hasMany(EmpleadoDispositivo::class);
     }
 
+    public function horarios()
+    {
+        return $this->belongsToMany(
+            Horario::class,
+            'empleado_horarios'
+        )
+        ->withPivot([
+            'empresa_id',
+            'vigente_desde',
+            'vigente_hasta',
+            'activo'
+        ])
+        ->withTimestamps();
+    }
+
+    public function empleadoHorarios()
+    {
+        return $this->hasMany(EmpleadoHorario::class);
+    }
+
+    
+
+   
+
+
+
 
 }

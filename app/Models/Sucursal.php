@@ -61,4 +61,10 @@ class Sucursal extends Model
         ])
         ->withTimestamps();
     }
+
+    public function horarios()
+    {
+        return $this->hasMany(Horario::class);
+    }
+
 }

@@ -41,6 +41,11 @@ return new class extends Migration
                 ->constrained('empleados')
                 ->nullOnDelete();
 
+            $table->foreignId('sucursal_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
             /*
             |--------------------------------------------------------------------------
             | Tipo de marcación
