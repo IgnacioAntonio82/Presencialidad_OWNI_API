@@ -22,15 +22,15 @@ return new class extends Migration
             */
 
             $table->foreignId('empresa_id')
-                ->constrained()
+                ->constrained('empresas')
                 ->cascadeOnDelete();
 
             $table->foreignId('empleado_id')
-                ->constrained()
+                ->constrained('empleados')
                 ->cascadeOnDelete();
 
             $table->foreignId('horario_id')
-                ->constrained()
+                ->constrained('horarios')
                 ->cascadeOnDelete();
 
             /*

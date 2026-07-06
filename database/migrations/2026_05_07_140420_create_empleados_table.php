@@ -18,7 +18,7 @@ return new class extends Migration
                     $table->id();
 
                     $table->foreignId('empresa_id')
-                        ->constrained()
+                        ->constrained('empresas')
                         ->cascadeOnDelete();
 
                     $table->string('legajo');

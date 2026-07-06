@@ -22,17 +22,17 @@ return new class extends Migration
             */
 
             $table->foreignId('empresa_id')
-                ->constrained()
+                ->constrained('empresas')
                 ->cascadeOnDelete();
 
             $table->foreignId('empleado_id')
-                ->constrained()
+                ->constrained('empleados')
                 ->cascadeOnDelete();
 
             // Dispositivo desde donde se realizó la marcación
             $table->foreignId('empleado_dispositivo_id')
                 ->nullable()
-                ->constrained()
+                ->constrained('empleados')
                 ->nullOnDelete();
 
             // Empleado que autorizó/modificó la marcación
@@ -43,7 +43,7 @@ return new class extends Migration
 
             $table->foreignId('sucursal_id')
                 ->nullable()
-                ->constrained()
+                ->constrained('sucursales')
                 ->nullOnDelete();
 
             /*

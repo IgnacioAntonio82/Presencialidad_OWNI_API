@@ -26,7 +26,7 @@ return new class extends Migration
             ->cascadeOnDelete();
 
         $table->foreignId('sucursal_id')
-            ->constrained()
+            ->constrained('sucursales')
             ->cascadeOnDelete();
 
         /*

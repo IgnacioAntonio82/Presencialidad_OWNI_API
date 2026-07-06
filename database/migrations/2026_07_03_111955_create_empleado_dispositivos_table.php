@@ -16,11 +16,11 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('empresa_id')
-                ->constrained()
+                ->constrained('empresas')
                 ->cascadeOnDelete();
 
             $table->foreignId('empleado_id')
-                ->constrained()
+                ->constrained('empleados')
                 ->cascadeOnDelete();
 
             $table->string('tipo', 20)  
