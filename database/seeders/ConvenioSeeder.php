@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Convenio;
+use App\Models\Convenios;
 
 class ConvenioSeeder extends Seeder
 {

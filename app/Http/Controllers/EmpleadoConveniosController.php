@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Convenio;
+use App\Models\Convenios;
 use App\Models\Empleado;
 use App\Models\EmpleadoConvenio;
 use Illuminate\Http\Request;
