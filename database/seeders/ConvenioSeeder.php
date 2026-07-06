@@ -357,7 +357,7 @@ class ConvenioSeeder extends Seeder
 
         foreach ($convenios as $convenio) {
 
-            Convenio::updateOrCreate(
+            Convenios::updateOrCreate(
                 ['codigo' => $convenio['codigo']],
                 $convenio
             );
