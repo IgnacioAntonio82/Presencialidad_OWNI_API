@@ -108,3 +108,14 @@ Route::apiResource(
 
 Route::post('/telegram/webhook',TelegramWebhookController::class);
 
+/*
+|--------------------------------------------------------------------------
+| API Feriados
+|--------------------------------------------------------------------------
+*/
+
+Route::post(
+    'feriados/importar',
+    [FeriadosController::class, 'importarFeriados']
+);
+
