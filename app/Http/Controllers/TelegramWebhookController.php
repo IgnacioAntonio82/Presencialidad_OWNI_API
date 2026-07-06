@@ -198,25 +198,82 @@ class TelegramWebhookController extends Controller
                     return response()->json(['ok' => true]);
                 }
 
-                EmpleadoDispositivo::updateOrCreate(
 
+
+
+
+
+
+                // EmpleadoDispositivo::updateOrCreate(
+
+                //     [
+                //         'empresa_id' => $empleado->empresa_id,
+                //         'empleado_id' => $empleado->id,
+                //         'tipo' => 'telegram'
+                //     ],
+
+                //     [
+                //         'identificador' => $chatId,
+                //         'nombre' => trim(
+                //             ($message['from']['first_name'] ?? '') . ' ' .
+                //             ($message['from']['last_name'] ?? '')
+                //         ),
+                //         'celular' => $message['contact']['phone_number'] ?? null,
+                //         'activo' => true
+                //     ]
+
+                // );
+
+
+                $yaRegistrado = EmpleadoDispositivo::where(
+                        'empresa_id',
+                        $empleado->empresa_id
+                    )
+                    ->where(
+                        'empleado_id',
+                        $empleado->id
+                    )
+                    ->where(
+                        'tipo',
+                        'telegram'
+                    )
+                    ->where(
+                        'identificador',
+                        $chatId
+                    )
+                    ->exists();
+
+                if ($yaRegistrado) {
+
+                    Cache::forget("telegram:$chatId");
+
+                    $this->sendMessage(
+                        $chatId,
+                        "✅ Este dispositivo ya se encuentra registrado."
+                    );
+
+                    return response()->json(['ok' => true]);
+                }
+
+                // Si no existe, updateOrCreate hará el alta o actualizará el chat_id.
+                EmpleadoDispositivo::updateOrCreate(
                     [
                         'empresa_id' => $empleado->empresa_id,
                         'empleado_id' => $empleado->id,
                         'tipo' => 'telegram'
                     ],
-
                     [
                         'identificador' => $chatId,
                         'nombre' => trim(
                             ($message['from']['first_name'] ?? '') . ' ' .
-                            ($message['from']['last_name'] ?? '')
-                        ),
-                        'celular' => $message['contact']['phone_number'] ?? null,
-                        'activo' => true
-                    ]
+                                    ($message['from']['last_name'] ?? '')
+                                ),
+                                'celular' => $message['contact']['phone_number'] ?? null,
+                                'activo' => true
+                            ]
+                        );
 
-                );
+
 
                 Cache::forget("telegram:$chatId");
 
