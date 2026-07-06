@@ -22,9 +22,9 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        // $this->call([
-        //     ConvenioSeeder::class,
+         $this->call([
+             ConvenioSeeder::class,
             
-        // ]);
+         ]);
     }
 }

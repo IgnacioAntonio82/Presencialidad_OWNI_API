@@ -91,11 +91,44 @@ class Empleado extends Model
         return $this->hasMany(EmpleadoHorario::class);
     }
 
+    public function convenios()
+    {
+        return $this->belongsToMany(
+            Convenio::class,
+            'empleado_convenios'
+        )
+        ->withPivot([
+            'empresa_id',
+            'vigente_desde',
+            'vigente_hasta',
+            'activo'
+        ])
+        ->withTimestamps();
+    }
+
+    public function empleadoConvenios()
+    {
+        return $this->hasMany(
+            EmpleadoConvenio::class
+        );
+    }
+
+    public function convenioVigente($fecha = null)
+    {
+        $fecha = $fecha ?? now()->toDateString();
+
+        return $this->empleadoConvenios()
+            ->where('activo', true)
+            ->where('vigente_desde', '<=', $fecha)
+            ->where(function ($q) use ($fecha) {
+                $q->whereNull('vigente_hasta')
+                ->orWhere('vigente_hasta', '>=', $fecha);
+            })
+            ->with('convenio')
+            ->first()?->convenio;
+    }
+
     
-
-   
-
-
 
 
 }
