@@ -32,7 +32,7 @@ return new class extends Migration
             // Dispositivo desde donde se realizó la marcación
             $table->foreignId('empleado_dispositivo_id')
                 ->nullable()
-                ->constrained('empleados')
+                ->constrained('empleado_dispositivos')
                 ->nullOnDelete();
 
             // Empleado que autorizó/modificó la marcación
