@@ -641,32 +641,93 @@ class TelegramWebhookController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | SI valida GPS
+            | GPS solo para ingreso y salida
             |--------------------------------------------------------------------------
             */
-           
-            
-            Cache::put(
 
-                "marcacion:$chatId",
+            if (
+                in_array($accion, ['ingreso', 'salida']) &&
+                $sucursalEmpleado->validar_gps
+            ) {
 
-                [
+                Cache::put(
 
-                    'tipo' => $accion,
+                    "marcacion:$chatId",
 
-                    'sucursal_id' => $sucursalEmpleado->sucursal_id
+                    [
 
-                ],
+                        'tipo' => $accion,
 
-                now()->addMinutes(2)
+                        'sucursal_id' => $sucursalEmpleado->sucursal_id
+
+                    ],
+
+                    now()->addMinutes(2)
+
+                );
+
+                $this->enviarBotonUbicacion($chatId);
+
+                return response()->json([
+                    'ok' => true
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Almuerzo y pausas (sin GPS)
+            |--------------------------------------------------------------------------
+            */
+
+            $ok = $this->registrarMarcacion(
+
+                $empleado,
+
+                $dispositivo,
+
+                $accion,
+
+                null,
+
+                null,
+
+                $sucursalEmpleado->sucursal_id
 
             );
 
-            $this->enviarBotonUbicacion($chatId);
+            if (!$ok) {
+
+                return response()->json([
+                    'ok' => true
+                ]);
+            }
+
+            $sucursal = $this->obtenerSucursalActiva(
+                $empleado->id
+            );
+
+            $this->sendMessage(
+
+                $chatId,
+
+                $this->obtenerMensajeMarcacion(
+                    $accion,
+                    $empleado,
+                    $sucursal?->sucursal
+                )
+
+            );
+
+            $this->enviarMenu(
+                $chatId,
+                $empleado
+            );
 
             return response()->json([
                 'ok' => true
             ]);
+
+            
             }
 
             /*
