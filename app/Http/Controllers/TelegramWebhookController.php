@@ -598,11 +598,20 @@ class TelegramWebhookController extends Controller
             |--------------------------------------------------------------------------
             */
 
+            $this->sendMessage($chatId, "PASO 7");
+
+            $this->sendMessage(
+                $chatId,
+                "Modalidad: {$sucursalEmpleado->modalidad} - GPS: " .
+                ($sucursalEmpleado->validar_gps ? 'SI' : 'NO')
+            );
+
             if (
                 $sucursalEmpleado->modalidad === 'home_office' ||
                 !$sucursalEmpleado->validar_gps
             ) {
 
+                $this->sendMessage($chatId, "PASO HOME");
                 $ok =$this->registrarMarcacion(
 
                     $empleado,
@@ -659,10 +668,7 @@ class TelegramWebhookController extends Controller
             |--------------------------------------------------------------------------
             */
            
-            //    $this->sendMessage(
-            //         $chatId,
-            //         "GUARDANDO\nKey: marcacion:$chatId"
-            //     );
+            $this->sendMessage($chatId, "PASO GPS");
             Cache::put(
 
                 "marcacion:$chatId",
@@ -678,6 +684,12 @@ class TelegramWebhookController extends Controller
                 now()->addMinutes(2)
 
             );
+
+            $this->sendMessage($chatId, "PASO CACHE");
+
+                $this->enviarBotonUbicacion($chatId);
+
+                $this->sendMessage($chatId, "PASO BOTON");
 
             
 
