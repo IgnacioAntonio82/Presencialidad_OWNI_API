@@ -1503,8 +1503,8 @@ class TelegramWebhookController extends Controller
     private function registrarMarcacion(  $empleado, $dispositivo, $tipo,  $latitud = null,  $longitud = null,  $sucursalId = null ):bool
     {
 
-        try {
-            dd('Entró a registrarMarcacion');
+       
+            
         $ultima = $this->obtenerUltimaMarcacion(
             $empleado->id
         );
@@ -1526,7 +1526,7 @@ class TelegramWebhookController extends Controller
         }
         
 
-        
+        $this->sendMessage($chatId, "estoy en registrarMarcacion");
 
         Marcaciones::create([
 
@@ -1554,13 +1554,7 @@ class TelegramWebhookController extends Controller
 
         ]);
         return true;
-
-        } catch (\Throwable $e) {
-
-            dd($e->getMessage());
-
-        }
-        
+               
 
     } 
     
