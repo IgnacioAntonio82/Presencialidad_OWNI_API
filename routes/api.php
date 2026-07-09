@@ -128,9 +128,9 @@ Route::post(
 |--------------------------------------------------------------------------
 */
 
-Route::post(
+Route::apiResource(
     'horarios',
-    [HorariosController::class]
+    HorariosController::class
 );
 
 /*
