@@ -100,19 +100,22 @@ return new class extends Migration
             'activo'
         ]);
 
-        $table->unique([
-            'empresa_id',
-            'sucursal_id',
-            'hora_ingreso',
-            'hora_salida',
-            'lunes',
-            'martes',
-            'miercoles',
-            'jueves',
-            'viernes',
-            'sabado',
-            'domingo'
-        ]);
+        $table->unique(
+            [
+                'empresa_id',
+                'sucursal_id',
+                'hora_ingreso',
+                'hora_salida',
+                'lunes',
+                'martes',
+                'miercoles',
+                'jueves',
+                'viernes',
+                'sabado',
+                'domingo'
+            ],
+            'uk_horarios'
+        );
 
         });
     }

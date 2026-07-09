@@ -144,4 +144,18 @@ Route::apiResource(
 Route::apiResource('empleado-horarios', EmpleadoHorariosController::class);
 
 
+/*
+|--------------------------------------------------------------------------
+| API Prueba de Cache
+|--------------------------------------------------------------------------
+*/
+Route::get('/test-cache', function () {
+
+    Cache::put('prueba', 'hola', now()->addMinutes(5));
+
+    return Cache::get('prueba');
+
+});
+
+
 
