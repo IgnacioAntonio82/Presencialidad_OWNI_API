@@ -9,6 +9,9 @@ use App\Http\Controllers\EmpleadoSucursalController;
 
 use App\Http\Controllers\TelegramWebhookController;
 
+use App\Http\Controllers\HorariosController;
+use App\Http\Controllers\EmpleadoHorariosController;
+
 /*
 |--------------------------------------------------------------------------
 | API Empresas
@@ -118,4 +121,25 @@ Route::post(
     'feriados/importar',
     [FeriadosController::class, 'importarFeriados']
 );
+
+/*
+|--------------------------------------------------------------------------
+| API Horarios
+|--------------------------------------------------------------------------
+*/
+
+Route::post(
+    'horarios',
+    [HorariosController::class]
+);
+
+/*
+|--------------------------------------------------------------------------
+| API EmpleadoHorarios
+|--------------------------------------------------------------------------
+*/
+
+Route::apiResource('empleado-horarios', EmpleadoHorariosController::class);
+
+
 
