@@ -283,6 +283,7 @@ class TelegramWebhookController extends Controller
 
     public function __invoke(Request $request)
     {
+        try {
         $update = $request->all();
 
         if (!isset($update['message'])) {
@@ -505,12 +506,12 @@ class TelegramWebhookController extends Controller
             return response()->json([
                 'ok' => true
             ]);
-            }
+        }
 
                        
             
 
-            if (isset(self::ACCIONES[$texto])) {
+        if (isset(self::ACCIONES[$texto])) {
 
             $accion = self::ACCIONES[$texto];
 
@@ -950,7 +951,20 @@ class TelegramWebhookController extends Controller
             );
 
         return response()->json(['ok' => true]);
+     } catch (\Throwable $e) {
+
+        \Log::error('TELEGRAM ERROR', [
+            'message' => $e->getMessage(),
+            'file'    => $e->getFile(),
+            'line'    => $e->getLine(),
+            'trace'   => $e->getTraceAsString(),
+        ]);
+
+        return response()->json([
+            'ok' => true
+        ]);
     }
+}
 
     /**
      * Envía un mensaje a Telegram.
