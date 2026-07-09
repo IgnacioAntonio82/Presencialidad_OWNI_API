@@ -1561,8 +1561,10 @@ class TelegramWebhookController extends Controller
     return true;
 
         } catch (\Throwable $e) {
-
-            dd($e->getMessage());
+            $this->sendMessage(
+                $dispositivo->identificador,
+                $e->getMessage());
+            
         }
                
 
