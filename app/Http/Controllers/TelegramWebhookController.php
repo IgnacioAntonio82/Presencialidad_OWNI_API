@@ -509,22 +509,28 @@ class TelegramWebhookController extends Controller
         }
 
                        
-        $this->sendMessage($chatId, json_encode($texto));
-
-        $this->sendMessage(
-            $chatId,
-            isset(self::ACCIONES[$texto]) ? "ACCION ENCONTRADA" : "ACCION NO ENCONTRADA"
-        );    
+           
 
         if (isset(self::ACCIONES[$texto])) {
 
+            //$accion = self::ACCIONES[$texto];
+
+            $this->sendMessage($chatId, "PASO 1");
+
             $accion = self::ACCIONES[$texto];
+
+            $this->sendMessage($chatId, "PASO 2");
+
 
             $sucursalEmpleado = $this->obtenerSucursalActiva(
                 $empleado->id
             );
 
+            $this->sendMessage($chatId, "PASO 3");
+
             if (!$sucursalEmpleado) {
+
+                $this->sendMessage($chatId, "NO TIENE SUCURSAL");
 
                 $this->sendMessage(
                     $chatId,
@@ -541,11 +547,14 @@ class TelegramWebhookController extends Controller
             | Validar secuencia
             |--------------------------------------------------------------------------
             */
+            $this->sendMessage($chatId, "PASO 4");
 
             $validacion = $this->validarSecuencia(
                 $empleado->id,
                 $accion
             );
+
+            $this->sendMessage($chatId, "PASO 5");
 
             if (!$validacion['ok']) {
 
@@ -566,6 +575,8 @@ class TelegramWebhookController extends Controller
             */
 
             $horario = $this->validarHorarioLaboral($empleado);
+
+            $this->sendMessage($chatId, "PASO 6");
 
             if (!$horario['ok']) {
 
