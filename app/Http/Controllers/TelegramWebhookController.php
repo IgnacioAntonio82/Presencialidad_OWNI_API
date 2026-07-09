@@ -294,12 +294,7 @@ class TelegramWebhookController extends Controller
 
         $chatId = $message['chat']['id'];
 
-        // $this->sendMessage(
-        //     $chatId,
-        //     "Update: {$update['update_id']}\n" .
-        //     "Texto: " . ($message['text'] ?? 'SIN TEXTO') . "\n" .
-        //     "Location: " . (isset($message['location']) ? 'SI' : 'NO')
-        // );
+       
 
         $texto = trim($message['text'] ?? '');
 
@@ -365,24 +360,9 @@ class TelegramWebhookController extends Controller
 
             if (isset($message['location'])) {
 
-            //    $key = "marcacion:$chatId";
-
-            //     $this->sendMessage(
-            //         $chatId,
-            //         "HAS: " . (Cache::has($key) ? "SI" : "NO")
-            //     );
-
-            //     $accion = Cache::get($key);
-
-            //     $this->sendMessage(
-            //         $chatId,
-            //         "GET: " . json_encode($accion)
-            //     );
-
-            //     return response()->json(['ok' => true]);
-
-            //$accion = Cache::get("marcacion:$chatId");
-            $accion = Cache::pull("marcacion:$chatId");
+            
+            $accion = Cache::get("marcacion:$chatId");
+            //$accion = Cache::pull("marcacion:$chatId");
 
             if (!$accion) {
 
@@ -512,26 +492,15 @@ class TelegramWebhookController extends Controller
            
 
         if (isset(self::ACCIONES[$texto])) {
-
-            //$accion = self::ACCIONES[$texto];
-
-            $this->sendMessage($chatId, "PASO 1");
-
+      
             $accion = self::ACCIONES[$texto];
-
-            $this->sendMessage($chatId, "PASO 2");
-
 
             $sucursalEmpleado = $this->obtenerSucursalActiva(
                 $empleado->id
             );
 
-            $this->sendMessage($chatId, "PASO 3");
-
             if (!$sucursalEmpleado) {
-
-                $this->sendMessage($chatId, "NO TIENE SUCURSAL");
-
+                
                 $this->sendMessage(
                     $chatId,
                     "❌ No tiene una sucursal activa asignada."
@@ -547,14 +516,12 @@ class TelegramWebhookController extends Controller
             | Validar secuencia
             |--------------------------------------------------------------------------
             */
-            $this->sendMessage($chatId, "PASO 4");
-
+            
             $validacion = $this->validarSecuencia(
                 $empleado->id,
                 $accion
             );
-
-            $this->sendMessage($chatId, "PASO 5");
+           
 
             if (!$validacion['ok']) {
 
@@ -575,8 +542,7 @@ class TelegramWebhookController extends Controller
             */
 
             $horario = $this->validarHorarioLaboral($empleado);
-
-            $this->sendMessage($chatId, "PASO 6");
+           
 
             if (!$horario['ok']) {
 
@@ -597,23 +563,13 @@ class TelegramWebhookController extends Controller
             | NO valida GPS
             |--------------------------------------------------------------------------
             */
-
-            $this->sendMessage($chatId, "PASO 7");
-
-            $this->sendMessage(
-                $chatId,
-                "Modalidad: {$sucursalEmpleado->modalidad} - GPS: " .
-                ($sucursalEmpleado->validar_gps ? 'SI' : 'NO')
-            );
+                       
 
             if (
                 $sucursalEmpleado->modalidad === 'home_office' ||
                 !$sucursalEmpleado->validar_gps
             ) {
-
-                $this->sendMessage($chatId, "PASO HOME");
-
-                $this->sendMessage($chatId, "Antes de registrar");
+               
                 $ok =$this->registrarMarcacion(
 
                     $empleado,
@@ -629,7 +585,7 @@ class TelegramWebhookController extends Controller
                     $sucursalEmpleado->sucursal_id
 
                 );
-                $this->sendMessage($chatId, "Resultado: " . ($ok ? "TRUE" : "FALSE"));
+                
 
                 if (!$ok) {
 
@@ -1524,7 +1480,7 @@ class TelegramWebhookController extends Controller
         }
         
 
-        try{
+       
 
         Marcaciones::create([
 
@@ -1552,20 +1508,12 @@ class TelegramWebhookController extends Controller
 
         ]);
         
-
-         $this->sendMessage(
-        $dispositivo->identificador,
-        "Registro insertado correctamente"
-    );
+       
+    
 
     return true;
 
-        } catch (\Throwable $e) {
-            $this->sendMessage(
-                $dispositivo->identificador,
-                $e->getMessage());
-            
-        }
+       
                
 
     } 
