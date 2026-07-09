@@ -338,6 +338,25 @@ class TelegramWebhookController extends Controller
 
             /*
             |--------------------------------------------------------------------------
+            | /start usuario registrado
+            |--------------------------------------------------------------------------
+            */
+
+            if ($texto === '/start') {
+
+                $this->sendMessage(
+                    $chatId,
+                    "👋 Bienvenido nuevamente {$empleado->nombre}."
+                );
+
+                $this->enviarMenu($chatId, $empleado);
+
+                return response()->json(['ok' => true]);
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
             | Recibió una ubicación
             |--------------------------------------------------------------------------
             */
@@ -680,25 +699,7 @@ class TelegramWebhookController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if ($dispositivo) {
-
-            if ($texto === '/start') {
-
-                $this->sendMessage(
-                    $chatId,
-                    "👋 Bienvenido nuevamente {$empleado->nombre}."
-                );
-
-                $this->enviarMenu(
-                    $chatId,
-                    $empleado
-                );
-
-                return response()->json([
-                    'ok' => true
-                ]);
-            }
-        }
+        
 
         /*
         |--------------------------------------------------------------------------
