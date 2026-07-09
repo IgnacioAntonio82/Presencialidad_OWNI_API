@@ -467,14 +467,14 @@ class TelegramWebhookController extends Controller
 
             
 
-            if ($accion === 'salida') {
+           if ($accion['tipo'] === 'salida') {
 
                 $this->ocultarMenu(
 
                     $chatId,
 
                     $this->obtenerMensajeMarcacion(
-                        $accion,
+                        $accion['tipo'],
                         $empleado,
                         $sucursal?->sucursal
                     )
@@ -488,7 +488,7 @@ class TelegramWebhookController extends Controller
                     $chatId,
 
                     $this->obtenerMensajeMarcacion(
-                        $accion,
+                        $accion['tipo'],
                         $empleado,
                         $sucursal?->sucursal
                     )
