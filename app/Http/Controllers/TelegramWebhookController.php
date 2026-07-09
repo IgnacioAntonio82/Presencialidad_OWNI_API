@@ -465,24 +465,62 @@ class TelegramWebhookController extends Controller
                 $empleado->id
             );
 
-            $this->sendMessage(
+            // $this->sendMessage(
 
-                $chatId,
+            //     $chatId,
 
-                $this->obtenerMensajeMarcacion(
-                    $accion['tipo'],
-                    $empleado,
-                    $sucursal?->sucursal
-                )
+            //     $this->obtenerMensajeMarcacion(
+            //         $accion['tipo'],
+            //         $empleado,
+            //         $sucursal?->sucursal
+            //     )
 
-            );
+            // );
             
 
-            $this->enviarMenu(
-                $chatId,
-                $empleado
-            );
+            // $this->enviarMenu(
+            //     $chatId,
+            //     $empleado
+            // );
 
+            // return response()->json([
+            //     'ok' => true
+            // ]);
+
+            if ($accion === 'salida') {
+
+                $this->ocultarMenu(
+
+                    $chatId,
+
+                    $this->obtenerMensajeMarcacion(
+                        $accion,
+                        $empleado,
+                        $sucursal?->sucursal
+                    )
+
+                );
+
+            } else {
+
+                $this->sendMessage(
+
+                    $chatId,
+
+                    $this->obtenerMensajeMarcacion(
+                        $accion,
+                        $empleado,
+                        $sucursal?->sucursal
+                    )
+
+                );
+
+                $this->enviarMenu(
+                    $chatId,
+                    $empleado
+                );
+
+            }
             return response()->json([
                 'ok' => true
             ]);
@@ -1003,6 +1041,8 @@ class TelegramWebhookController extends Controller
 
                 'reply_markup' => [
 
+                    
+
                     'keyboard' => [
 
                         [
@@ -1185,25 +1225,38 @@ class TelegramWebhookController extends Controller
 
         $botones = self::ESTADOS[$estado] ?? self::ESTADOS['sin_jornada'];
 
-    $keyboard = [];
+            /*
+            |--------------------------------------------------------------------------
+            | Ya registró un ingreso hoy
+            |--------------------------------------------------------------------------
+            */
 
-    foreach ($botones as $boton) {
+            if (
+                $estado === 'salida' &&
+                $this->existeIngresoHoy($empleadoId)
+            ) {
+                $botones = [];
+            }
 
-        $keyboard[] = [
+        $keyboard = [];
 
-            [
+        foreach ($botones as $boton) {
 
-                'text' => $boton
+            $keyboard[] = [
 
-            ]
+                [
 
-        ];
+                    'text' => $boton
+
+                ]
+
+            ];
+
+        }
+
+        return $keyboard;
 
     }
-
-    return $keyboard;
-
-}
 
     private function obtenerEstadoActual($empleadoId)
     {
@@ -1295,7 +1348,10 @@ class TelegramWebhookController extends Controller
 
                 'reply_markup' => [
 
-                    'keyboard' => $this->crearKeyboard($estado),
+                    'keyboard' => $this->crearKeyboard(
+                        $estado,
+                        $empleado->id
+                    ),
 
                     'resize_keyboard' => true,
 
@@ -1599,18 +1655,51 @@ class TelegramWebhookController extends Controller
 
     private function existeIngresoHoy($empleadoId): bool
     {
-        $existe = Marcaciones::where('empleado_id', $empleadoId)
+        return Marcaciones::where('empleado_id', $empleadoId)
             ->whereDate('fecha', today())
             ->where('tipo', 'ingreso')
             ->exists();
-
-        dd([
-            'empleado' => $empleadoId,
-            'today' => today()->toDateString(),
-            'existe' => $existe,
-        ]);
-
-        return $existe;
     }
+
+    private function ocultarMenu($chatId, $mensaje): void
+    {
+        $response = Http::post(
+
+            'https://api.telegram.org/bot'
+            . env('TELEGRAM_BOT_TOKEN')
+            . '/sendMessage',
+
+            [
+
+                'chat_id' => $chatId,
+
+                'text' => $mensaje,
+
+                'reply_markup' => [
+
+                    'remove_keyboard' => true
+
+                ]
+
+            ]
+
+        );
+
+        if (!$response->successful()) {
+
+            \Log::error('Error ocultando menú de Telegram', [
+
+                'status' => $response->status(),
+
+                'body' => $response->body(),
+
+                'chat_id' => $chatId
+
+            ]);
+
+        }
+    }
+
+    
 
 }
