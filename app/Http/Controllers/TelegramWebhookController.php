@@ -509,7 +509,10 @@ class TelegramWebhookController extends Controller
         }
 
                        
-            
+        $this->sendMessage(
+            $chatId,
+            "RECIBÍ: [$texto]"
+        );    
 
         if (isset(self::ACCIONES[$texto])) {
 
