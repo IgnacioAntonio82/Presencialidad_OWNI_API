@@ -345,21 +345,21 @@ class TelegramWebhookController extends Controller
 
             if (isset($message['location'])) {
 
-        //    $key = "marcacion:$chatId";
+            //    $key = "marcacion:$chatId";
 
-        //     $this->sendMessage(
-        //         $chatId,
-        //         "HAS: " . (Cache::has($key) ? "SI" : "NO")
-        //     );
+            //     $this->sendMessage(
+            //         $chatId,
+            //         "HAS: " . (Cache::has($key) ? "SI" : "NO")
+            //     );
 
-        //     $accion = Cache::get($key);
+            //     $accion = Cache::get($key);
 
-        //     $this->sendMessage(
-        //         $chatId,
-        //         "GET: " . json_encode($accion)
-        //     );
+            //     $this->sendMessage(
+            //         $chatId,
+            //         "GET: " . json_encode($accion)
+            //     );
 
-        //     return response()->json(['ok' => true]);
+            //     return response()->json(['ok' => true]);
 
             //$accion = Cache::get("marcacion:$chatId");
             $accion = Cache::pull("marcacion:$chatId");
@@ -486,7 +486,7 @@ class TelegramWebhookController extends Controller
             return response()->json([
                 'ok' => true
             ]);
-        }
+            }
 
                        
             
@@ -623,10 +623,10 @@ class TelegramWebhookController extends Controller
             |--------------------------------------------------------------------------
             */
            
-        //    $this->sendMessage(
-        //         $chatId,
-        //         "GUARDANDO\nKey: marcacion:$chatId"
-        //     );
+            //    $this->sendMessage(
+            //         $chatId,
+            //         "GUARDANDO\nKey: marcacion:$chatId"
+            //     );
             Cache::put(
 
                 "marcacion:$chatId",
@@ -650,7 +650,7 @@ class TelegramWebhookController extends Controller
             return response()->json([
                 'ok' => true
             ]);
-        }
+            }
 
             /*
             |--------------------------------------------------------------------------
@@ -674,13 +674,42 @@ class TelegramWebhookController extends Controller
 
         if (str_starts_with($texto, '/start')) {
 
+        /*
+        |--------------------------------------------------------------------------
+        | El dispositivo ya está registrado
+        |--------------------------------------------------------------------------
+        */
+
+        if ($dispositivo) {
+
+            $this->sendMessage(
+                $chatId,
+                "👋 Bienvenido nuevamente {$empleado->nombre}."
+            );
+
+            $this->enviarMenu(
+                $chatId,
+                $empleado
+            );
+
+            return response()->json([
+                'ok' => true
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Debe venir con el código QR
+        |--------------------------------------------------------------------------
+        */
+
             $partes = explode(' ', $texto);
 
             if (!isset($partes[1])) {
 
                 $this->sendMessage(
                     $chatId,
-                    "❌ El código QR no es válido."
+                    "📷 Escanee el código QR de la sucursal para vincular su dispositivo."
                 );
 
                 return response()->json(['ok' => true]);
@@ -718,8 +747,13 @@ class TelegramWebhookController extends Controller
             );
 
             $this->sendMessage(
+
                 $chatId,
-                "👋 Bienvenido.\n\n🏢 Sucursal: {$sucursal->nombre}\n\n🆔 Ingrese su legajo."
+
+                "👋 Bienvenido.\n\n" .
+                "🏢 Sucursal: {$sucursal->nombre}\n\n" .
+                "🆔 Ingrese su legajo."
+
             );
 
             return response()->json(['ok' => true]);
