@@ -1383,9 +1383,7 @@ class TelegramWebhookController extends Controller
 
         $horaActual = Carbon::now()->format('H:i:s');
 
-        if (
-
-            $horaActual < $horario->hora_ingreso ||
+        if (           
 
             $horaActual > $horario->hora_salida
 
@@ -1395,11 +1393,9 @@ class TelegramWebhookController extends Controller
 
                 'ok' => false,
 
-                'mensaje' =>
-                    "❌ La marcación sólo puede realizarse entre las "
-                    . substr($horario->hora_ingreso,0,5)
-                    . " y "
-                    . substr($horario->hora_salida,0,5)
+               'mensaje' =>
+                    "❌ La marcación sólo puede realizarse hasta las "
+                    . substr($horario->hora_salida, 0, 5)
 
             ];
 
