@@ -6,11 +6,13 @@ use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\EmpleadoSucursalController;
-
 use App\Http\Controllers\TelegramWebhookController;
-
 use App\Http\Controllers\HorariosController;
 use App\Http\Controllers\EmpleadoHorariosController;
+
+use App\Http\Controllers\EmpleadoDispositivoController;
+use App\Http\Controllers\MarcacionesController;
+use App\Http\Controllers\FeriadosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,7 +102,7 @@ Route::apiResource(
 */
 Route::apiResource(
     'marcaciones',
-    MarcacionController::class
+    MarcacionesController::class
 );
 
 /*
