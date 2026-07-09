@@ -407,7 +407,7 @@ class TelegramWebhookController extends Controller
                 ]);
             }
 
-            $this->registrarMarcacion(
+            $ok =$this->registrarMarcacion(
 
                 $empleado,
 
@@ -423,7 +423,17 @@ class TelegramWebhookController extends Controller
 
             );
 
-            Cache::forget("marcacion:$chatId");
+            if (!$ok) {
+
+                Cache::forget("marcacion:$chatId");
+
+                return response()->json([
+                    'ok' => true
+                ]);
+
+            }
+
+            //Cache::forget("marcacion:$chatId");
 
             $sucursal = $this->obtenerSucursalActiva(
                 $empleado->id
@@ -484,7 +494,7 @@ class TelegramWebhookController extends Controller
                 !$sucursalEmpleado->validar_gps
             ) {
 
-                $this->registrarMarcacion(
+                $ok =$this->registrarMarcacion(
 
                     $empleado,
 
@@ -499,6 +509,13 @@ class TelegramWebhookController extends Controller
                     $sucursalEmpleado->sucursal_id
 
                 );
+
+                if (!$ok) {
+
+                    return response()->json([
+                        'ok' => true
+                    ]);
+                }
 
                 $sucursal = $this->obtenerSucursalActiva(
                     $empleado->id
@@ -1287,7 +1304,7 @@ class TelegramWebhookController extends Controller
 
 
 
-    private function registrarMarcacion(  $empleado, $dispositivo, $tipo,  $latitud = null,  $longitud = null,  $sucursalId = null )
+    private function registrarMarcacion(  $empleado, $dispositivo, $tipo,  $latitud = null,  $longitud = null,  $sucursalId = null ):bool
     {
 
         $ultima = $this->obtenerUltimaMarcacion(
@@ -1303,14 +1320,11 @@ class TelegramWebhookController extends Controller
         if ($ultima && $ultima->tipo == $tipo) {
 
             $this->sendMessage(
-
                 $dispositivo->identificador,
-
                 "⚠️ Esa marcación ya fue registrada."
-
             );
 
-            return;
+            return false;
         }
 
         $validacion = $this->validarSecuencia(  $empleado->id, $tipo);
@@ -1325,7 +1339,7 @@ class TelegramWebhookController extends Controller
 
             );
 
-            return;
+            return false;
         }
 
         $horario = $this->validarHorarioLaboral(
@@ -1342,7 +1356,7 @@ class TelegramWebhookController extends Controller
 
             );
 
-            return;
+            return false  ;
 
         }
 
@@ -1371,6 +1385,7 @@ class TelegramWebhookController extends Controller
             'estado' => 'confirmada'
 
         ]);
+        return true;
         
 
     } 
