@@ -358,7 +358,7 @@ class TelegramWebhookController extends Controller
             */
                       
 
-            if (isset($message['location'])) {
+        if (isset($message['location'])) {
 
             
             $accion = Cache::get("marcacion:$chatId");
@@ -459,33 +459,13 @@ class TelegramWebhookController extends Controller
 
             }
 
-            //Cache::forget("marcacion:$chatId");
+            Cache::forget("marcacion:$chatId");
 
             $sucursal = $this->obtenerSucursalActiva(
                 $empleado->id
             );
 
-            // $this->sendMessage(
-
-            //     $chatId,
-
-            //     $this->obtenerMensajeMarcacion(
-            //         $accion['tipo'],
-            //         $empleado,
-            //         $sucursal?->sucursal
-            //     )
-
-            // );
             
-
-            // $this->enviarMenu(
-            //     $chatId,
-            //     $empleado
-            // );
-
-            // return response()->json([
-            //     'ok' => true
-            // ]);
 
             if ($accion === 'salida') {
 
@@ -665,7 +645,7 @@ class TelegramWebhookController extends Controller
             |--------------------------------------------------------------------------
             */
            
-            $this->sendMessage($chatId, "PASO GPS");
+            
             Cache::put(
 
                 "marcacion:$chatId",
@@ -681,14 +661,6 @@ class TelegramWebhookController extends Controller
                 now()->addMinutes(2)
 
             );
-
-            $this->sendMessage($chatId, "PASO CACHE");
-
-                $this->enviarBotonUbicacion($chatId);
-
-                $this->sendMessage($chatId, "PASO BOTON");
-
-            
 
             $this->enviarBotonUbicacion($chatId);
 
