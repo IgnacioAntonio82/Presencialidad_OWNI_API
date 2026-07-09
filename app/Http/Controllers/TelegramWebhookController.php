@@ -345,40 +345,41 @@ class TelegramWebhookController extends Controller
 
             if (isset($message['location'])) {
 
-           $key = "marcacion:$chatId";
+        //    $key = "marcacion:$chatId";
 
-            $this->sendMessage(
-                $chatId,
-                "HAS: " . (Cache::has($key) ? "SI" : "NO")
-            );
+        //     $this->sendMessage(
+        //         $chatId,
+        //         "HAS: " . (Cache::has($key) ? "SI" : "NO")
+        //     );
 
-            $accion = Cache::get($key);
+        //     $accion = Cache::get($key);
 
-            $this->sendMessage(
-                $chatId,
-                "GET: " . json_encode($accion)
-            );
+        //     $this->sendMessage(
+        //         $chatId,
+        //         "GET: " . json_encode($accion)
+        //     );
 
-            return response()->json(['ok' => true]);
+        //     return response()->json(['ok' => true]);
 
-            $accion = Cache::get("marcacion:$chatId");
+            //$accion = Cache::get("marcacion:$chatId");
+            $accion = Cache::pull("marcacion:$chatId");
 
-            // if (!$accion) {
+            if (!$accion) {
 
-            //     $this->sendMessage(
-            //         $chatId,
-            //         "❌ No existe ninguna marcación pendiente."
-            //     );
+                $this->sendMessage(
+                    $chatId,
+                    "❌ No existe ninguna marcación pendiente."
+                );
 
-            //     $this->enviarMenu(
-            //         $chatId,
-            //         $empleado
-            //     );
+                $this->enviarMenu(
+                    $chatId,
+                    $empleado
+                );
 
-            //     return response()->json([
-            //         'ok' => true
-            //     ]);
-            // }
+                return response()->json([
+                    'ok' => true
+                ]);
+            }
 
             $latitud = $message['location']['latitude'];
 
