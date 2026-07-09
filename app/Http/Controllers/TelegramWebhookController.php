@@ -682,19 +682,22 @@ class TelegramWebhookController extends Controller
 
         if ($dispositivo) {
 
-            $this->sendMessage(
-                $chatId,
-                "👋 Bienvenido nuevamente {$empleado->nombre}."
-            );
+            if ($texto === '/start') {
 
-            $this->enviarMenu(
-                $chatId,
-                $empleado
-            );
+                $this->sendMessage(
+                    $chatId,
+                    "👋 Bienvenido nuevamente {$empleado->nombre}."
+                );
 
-            return response()->json([
-                'ok' => true
-            ]);
+                $this->enviarMenu(
+                    $chatId,
+                    $empleado
+                );
+
+                return response()->json([
+                    'ok' => true
+                ]);
+            }
         }
 
         /*
