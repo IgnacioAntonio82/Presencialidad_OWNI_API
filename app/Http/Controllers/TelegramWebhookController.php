@@ -1524,10 +1524,7 @@ class TelegramWebhookController extends Controller
         }
         
 
-        $this->sendMessage(
-                $dispositivo->identificador,
-                "⚠️ ingrese."
-            );
+        try{
 
         Marcaciones::create([
 
@@ -1554,7 +1551,19 @@ class TelegramWebhookController extends Controller
             'estado' => 'confirmada'
 
         ]);
-        return true;
+        
+
+         $this->sendMessage(
+        $dispositivo->identificador,
+        "Registro insertado correctamente"
+    );
+
+    return true;
+
+        } catch (\Throwable $e) {
+
+            dd($e->getMessage());
+        }
                
 
     } 
