@@ -467,6 +467,8 @@ class TelegramWebhookController extends Controller
 
             if (isset(self::ACCIONES[$texto])) {
 
+            $accion = self::ACCIONES[$texto];
+
             $sucursalEmpleado = $this->obtenerSucursalActiva(
                 $empleado->id
             );
@@ -545,7 +547,7 @@ class TelegramWebhookController extends Controller
 
                     $dispositivo,
 
-                    self::ACCIONES[$texto],
+                    $accion,
 
                     null,
 
@@ -571,7 +573,7 @@ class TelegramWebhookController extends Controller
                     $chatId,
 
                     $this->obtenerMensajeMarcacion(
-                        self::ACCIONES[$texto],
+                        $accion,
                         $empleado,
                         $sucursal?->sucursal
                     )
@@ -601,7 +603,7 @@ class TelegramWebhookController extends Controller
 
                 [
 
-                    'tipo' => self::ACCIONES[$texto],
+                    'tipo' => $accion,
 
                     'sucursal_id' => $sucursalEmpleado->sucursal_id
 
