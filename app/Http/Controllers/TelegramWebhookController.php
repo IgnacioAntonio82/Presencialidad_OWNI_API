@@ -485,6 +485,51 @@ class TelegramWebhookController extends Controller
 
             /*
             |--------------------------------------------------------------------------
+            | Validar secuencia
+            |--------------------------------------------------------------------------
+            */
+
+            $validacion = $this->validarSecuencia(
+                $empleado->id,
+                $accion
+            );
+
+            if (!$validacion['ok']) {
+
+                $this->sendMessage(
+                    $chatId,
+                    $validacion['mensaje']
+                );
+
+                return response()->json([
+                    'ok' => true
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Validar horario
+            |--------------------------------------------------------------------------
+            */
+
+            $horario = $this->validarHorarioLaboral($empleado);
+
+            if (!$horario['ok']) {
+
+                $this->sendMessage(
+                    $chatId,
+                    $horario['mensaje']
+                );
+
+                return response()->json([
+                    'ok' => true
+                ]);
+            }
+
+
+
+            /*
+            |--------------------------------------------------------------------------
             | NO valida GPS
             |--------------------------------------------------------------------------
             */
@@ -1326,39 +1371,9 @@ class TelegramWebhookController extends Controller
 
             return false;
         }
+        
 
-        $validacion = $this->validarSecuencia(  $empleado->id, $tipo);
-
-        if (!$validacion['ok']) {
-
-            $this->sendMessage(
-
-                $dispositivo->identificador,
-
-                $validacion['mensaje']
-
-            );
-
-            return false;
-        }
-
-        $horario = $this->validarHorarioLaboral(
-            $empleado
-        );
-
-        if (!$horario['ok']) {
-
-            $this->sendMessage(
-
-                $dispositivo->identificador,
-
-                $horario['mensaje']
-
-            );
-
-            return false  ;
-
-        }
+        
 
         Marcaciones::create([
 
