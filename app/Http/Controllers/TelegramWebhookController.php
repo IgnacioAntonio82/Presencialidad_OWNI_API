@@ -612,6 +612,8 @@ class TelegramWebhookController extends Controller
             ) {
 
                 $this->sendMessage($chatId, "PASO HOME");
+
+                $this->sendMessage($chatId, "Antes de registrar");
                 $ok =$this->registrarMarcacion(
 
                     $empleado,
@@ -627,6 +629,7 @@ class TelegramWebhookController extends Controller
                     $sucursalEmpleado->sucursal_id
 
                 );
+                $this->sendMessage($chatId, "Resultado: " . ($ok ? "TRUE" : "FALSE"));
 
                 if (!$ok) {
 
@@ -1500,6 +1503,8 @@ class TelegramWebhookController extends Controller
     private function registrarMarcacion(  $empleado, $dispositivo, $tipo,  $latitud = null,  $longitud = null,  $sucursalId = null ):bool
     {
 
+        try {
+            dd('Entró a registrarMarcacion');
         $ultima = $this->obtenerUltimaMarcacion(
             $empleado->id
         );
@@ -1549,6 +1554,12 @@ class TelegramWebhookController extends Controller
 
         ]);
         return true;
+
+        } catch (\Throwable $e) {
+
+            dd($e->getMessage());
+
+        }
         
 
     } 
