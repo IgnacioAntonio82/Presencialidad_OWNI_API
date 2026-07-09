@@ -293,12 +293,12 @@ class TelegramWebhookController extends Controller
 
         $chatId = $message['chat']['id'];
 
-        $this->sendMessage(
-            $chatId,
-            "Update: {$update['update_id']}\n" .
-            "Texto: " . ($message['text'] ?? 'SIN TEXTO') . "\n" .
-            "Location: " . (isset($message['location']) ? 'SI' : 'NO')
-        );
+        // $this->sendMessage(
+        //     $chatId,
+        //     "Update: {$update['update_id']}\n" .
+        //     "Texto: " . ($message['text'] ?? 'SIN TEXTO') . "\n" .
+        //     "Location: " . (isset($message['location']) ? 'SI' : 'NO')
+        // );
 
         $texto = trim($message['text'] ?? '');
 
@@ -345,29 +345,40 @@ class TelegramWebhookController extends Controller
 
             if (isset($message['location'])) {
 
+           $key = "marcacion:$chatId";
+
             $this->sendMessage(
                 $chatId,
-                "LEYENDO\nKey: marcacion:$chatId"
+                "HAS: " . (Cache::has($key) ? "SI" : "NO")
             );
+
+            $accion = Cache::get($key);
+
+            $this->sendMessage(
+                $chatId,
+                "GET: " . json_encode($accion)
+            );
+
+            return response()->json(['ok' => true]);
 
             $accion = Cache::get("marcacion:$chatId");
 
-            if (!$accion) {
+            // if (!$accion) {
 
-                $this->sendMessage(
-                    $chatId,
-                    "❌ No existe ninguna marcación pendiente."
-                );
+            //     $this->sendMessage(
+            //         $chatId,
+            //         "❌ No existe ninguna marcación pendiente."
+            //     );
 
-                $this->enviarMenu(
-                    $chatId,
-                    $empleado
-                );
+            //     $this->enviarMenu(
+            //         $chatId,
+            //         $empleado
+            //     );
 
-                return response()->json([
-                    'ok' => true
-                ]);
-            }
+            //     return response()->json([
+            //         'ok' => true
+            //     ]);
+            // }
 
             $latitud = $message['location']['latitude'];
 
@@ -611,10 +622,10 @@ class TelegramWebhookController extends Controller
             |--------------------------------------------------------------------------
             */
            
-           $this->sendMessage(
-                $chatId,
-                "GUARDANDO\nKey: marcacion:$chatId"
-            );
+        //    $this->sendMessage(
+        //         $chatId,
+        //         "GUARDANDO\nKey: marcacion:$chatId"
+        //     );
             Cache::put(
 
                 "marcacion:$chatId",
