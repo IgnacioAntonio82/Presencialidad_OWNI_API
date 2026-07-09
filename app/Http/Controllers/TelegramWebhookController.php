@@ -1239,29 +1239,41 @@ class TelegramWebhookController extends Controller
     }
 
     private function validarSecuencia($empleadoId, $tipo): array
-        {
-            $estado = $this->obtenerEstadoActual($empleadoId);
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | Solo un ingreso por día
+        |--------------------------------------------------------------------------
+        */
 
-            $permitidos = self::TRANSICIONES[$estado] ?? [];
-
-            if (!in_array($tipo, $permitidos)) {
-
-                return [
-
-                    'ok' => false,
-
-                    'mensaje' => self::MENSAJES[$estado][$tipo]
-                        ?? '❌ La acción solicitada no está permitida.'
-
-                ];
-            }
+        if (
+            $tipo === 'ingreso' &&
+            $this->existeIngresoHoy($empleadoId)
+        ) {
 
             return [
-
-                'ok' => true
-
+                'ok' => false,
+                'mensaje' => '⚠️ Ya registró el ingreso correspondiente al día de hoy.'
             ];
         }
+
+        $estado = $this->obtenerEstadoActual($empleadoId);
+
+        $permitidos = self::TRANSICIONES[$estado] ?? [];
+
+        if (!in_array($tipo, $permitidos)) {
+
+            return [
+                'ok' => false,
+                'mensaje' => self::MENSAJES[$estado][$tipo]
+                    ?? '❌ La acción solicitada no está permitida.'
+            ];
+        }
+
+        return [
+            'ok' => true
+        ];
+    }
 
     private function enviarMenu($chatId, $empleado): void
     {
@@ -1477,10 +1489,8 @@ class TelegramWebhookController extends Controller
             );
 
             return false;
-        }
-        
+        }      
 
-       
 
         Marcaciones::create([
 
@@ -1508,14 +1518,9 @@ class TelegramWebhookController extends Controller
 
         ]);
         
-       
-    
-
+      
     return true;
-
-       
-               
-
+      
     } 
     
     
@@ -1590,6 +1595,22 @@ class TelegramWebhookController extends Controller
         $texto .= $datos['mensaje'];
 
         return $texto;
+    }
+
+    private function existeIngresoHoy($empleadoId): bool
+    {
+        $existe = Marcaciones::where('empleado_id', $empleadoId)
+            ->whereDate('fecha', today())
+            ->where('tipo', 'ingreso')
+            ->exists();
+
+        dd([
+            'empleado' => $empleadoId,
+            'today' => today()->toDateString(),
+            'existe' => $existe,
+        ]);
+
+        return $existe;
     }
 
 }
