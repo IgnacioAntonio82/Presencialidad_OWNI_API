@@ -334,10 +334,12 @@ class TelegramWebhookController extends Controller
             | Recibió una ubicación
             |--------------------------------------------------------------------------
             */
-            \Log::info('CACHE LEIDA', [
-                'chatId' => $chatId,
-                'cache' => Cache::get("marcacion:$chatId"),
-            ]);
+            
+            $this->sendMessage(
+                $chatId,
+                "Chat ID recibido: $chatId"
+            );
+
             if (isset($message['location'])) {
 
             $accion = Cache::get("marcacion:$chatId");
@@ -600,7 +602,11 @@ class TelegramWebhookController extends Controller
             | SI valida GPS
             |--------------------------------------------------------------------------
             */
-
+            $this->sendMessage(
+                $chatId,
+                "Guardando con Chat ID: $chatId"
+            );
+            
             Cache::put(
 
                 "marcacion:$chatId",
@@ -617,7 +623,7 @@ class TelegramWebhookController extends Controller
 
             );
 
-            \Log::info('CACHE GUARDADA', Cache::get("marcacion:$chatId"));
+            
 
             $this->enviarBotonUbicacion($chatId);
 
