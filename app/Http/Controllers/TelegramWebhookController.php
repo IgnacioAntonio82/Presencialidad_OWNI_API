@@ -969,10 +969,9 @@ class TelegramWebhookController extends Controller
     /**
      * Envía un mensaje a Telegram.
      */
-    private function sendMessage(   int|string $chatId,  string $texto ): void 
+    private function sendMessage(int|string $chatId, string $texto): void
     {
-
-        Http::post(
+        $response = Http::post(
 
             'https://api.telegram.org/bot'
             . env('TELEGRAM_BOT_TOKEN')
@@ -985,11 +984,25 @@ class TelegramWebhookController extends Controller
 
         );
 
+        if (!$response->successful()) {
+
+            \Log::error('Error enviando mensaje a Telegram', [
+
+                'status' => $response->status(),
+
+                'body' => $response->body(),
+
+                'chat_id' => $chatId,
+
+                'texto' => $texto
+
+            ]);
+        }
     }
 
     private function enviarBotonUbicacion($chatId): void
     {
-        Http::post(
+        $response = Http::post(
 
             'https://api.telegram.org/bot'
             . env('TELEGRAM_BOT_TOKEN')
@@ -1030,6 +1043,20 @@ class TelegramWebhookController extends Controller
             ]
 
         );
+
+        if (!$response->successful()) {
+
+            \Log::error('Error enviando botón de ubicación', [
+
+                'status' => $response->status(),
+
+                'body' => $response->body(),
+
+                'chat_id' => $chatId
+
+            ]);
+
+        }
     }
 
     private function obtenerSucursalActiva($empleadoId)
@@ -1251,16 +1278,11 @@ class TelegramWebhookController extends Controller
 
     private function enviarMenu($chatId, $empleado): void
     {
-
-        // $ultima = $this->obtenerUltimaMarcacion(
-        //     $empleado->id
-        // );
-
         $estado = $this->obtenerEstadoActual(
             $empleado->id
         );
 
-        Http::post(
+        $response = Http::post(
 
             'https://api.telegram.org/bot'
             . env('TELEGRAM_BOT_TOKEN')
@@ -1274,7 +1296,6 @@ class TelegramWebhookController extends Controller
 
                 'reply_markup' => [
 
-                    //'keyboard' => $this->crearKeyboard($ultima),
                     'keyboard' => $this->crearKeyboard($estado),
 
                     'resize_keyboard' => true,
@@ -1289,6 +1310,23 @@ class TelegramWebhookController extends Controller
 
         );
 
+        if (!$response->successful()) {
+
+            \Log::error('Error enviando menú de Telegram', [
+
+                'status' => $response->status(),
+
+                'body' => $response->body(),
+
+                'chat_id' => $chatId,
+
+                'empleado_id' => $empleado->id,
+
+                'estado' => $estado
+
+            ]);
+
+        }
     }
 
     private function obtenerHorarioEmpleado($empleado)
