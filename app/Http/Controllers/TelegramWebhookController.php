@@ -293,6 +293,13 @@ class TelegramWebhookController extends Controller
 
         $chatId = $message['chat']['id'];
 
+        $this->sendMessage(
+            $chatId,
+            "Update: {$update['update_id']}\n" .
+            "Texto: " . ($message['text'] ?? 'SIN TEXTO') . "\n" .
+            "Location: " . (isset($message['location']) ? 'SI' : 'NO')
+        );
+
         $texto = trim($message['text'] ?? '');
 
         /*
