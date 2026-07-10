@@ -1336,7 +1336,7 @@ class TelegramWebhookController extends Controller
 
         if (
             $tipo === 'ingreso' &&
-            $this->existeIngresoHoy($empleadoId)
+            $this->existeMarcacionHoy($empleadoId, 'ingreso')
         ) {
 
             return [
@@ -1344,6 +1344,52 @@ class TelegramWebhookController extends Controller
                 'mensaje' => '⚠️ La jornada de hoy ya fue registrada. Deberá esperar al próximo día para realizar un nuevo ingreso.'
             ];
         }
+
+        // Sólo un inicio de almuerzo por día
+        if (
+            $tipo === 'almuerzo_inicio' &&
+            $this->existeMarcacionHoy($empleadoId, 'almuerzo_inicio')
+        ) {
+            return [
+                'ok' => false,
+                'mensaje' => '⚠️ El almuerzo ya fue registrado hoy.'
+            ];
+        }
+
+        // Sólo un fin de almuerzo por día
+        if (
+            $tipo === 'almuerzo_fin' &&
+            $this->existeMarcacionHoy($empleadoId, 'almuerzo_fin')
+        ) {
+            return [
+                'ok' => false,
+                'mensaje' => '⚠️ El almuerzo ya fue finalizado hoy.'
+            ];
+        }
+
+        // Sólo un inicio de pausa por día
+        if (
+            $tipo === 'pausa_inicio' &&
+            $this->existeMarcacionHoy($empleadoId, 'pausa_inicio')
+        ) {
+            return [
+                'ok' => false,
+                'mensaje' => '⚠️ La pausa ya fue iniciada hoy.'
+            ];
+        }
+
+        // Sólo un fin de pausa por día
+        if (
+            $tipo === 'pausa_fin' &&
+            $this->existeMarcacionHoy($empleadoId, 'pausa_fin')
+        ) {
+            return [
+                'ok' => false,
+                'mensaje' => '⚠️ La pausa ya fue finalizada hoy.'
+            ];
+        }
+
+
 
         $estado = $this->obtenerEstadoActual($empleadoId);
 
@@ -1620,9 +1666,16 @@ class TelegramWebhookController extends Controller
 
             if ($inicio) {
 
-                $minutos = $inicio->fecha_hora->diffInMinutes(now());
+                //$minutos = $inicio->fecha_hora->diffInMinutes(now());
 
-                $texto .= "\n⏱ Duración de la pausa: {$minutos} minutos";
+                //$texto .= "\n⏱ Duración de la pausa: {$minutos} minutos";
+
+                $segundos = $inicio->fecha_hora->diffInSeconds(now());
+
+                $minutos = intdiv($segundos, 60);
+                $seg = $segundos % 60;
+
+                $texto .= "\n⏱ Duración de la pausa: {$minutos} min {$seg} seg";
 
             }
 
@@ -1635,11 +1688,11 @@ class TelegramWebhookController extends Controller
         return $texto;
     }
 
-    private function existeIngresoHoy($empleadoId): bool
+    private function existeMarcacionHoy($empleadoId, $tipo): bool
     {
         return Marcaciones::where('empleado_id', $empleadoId)
             ->whereDate('fecha', today())
-            ->where('tipo', 'ingreso')
+            ->where('tipo', $tipo)
             ->exists();
     }
 
