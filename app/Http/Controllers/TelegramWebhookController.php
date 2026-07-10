@@ -1593,9 +1593,12 @@ class TelegramWebhookController extends Controller
 
             if ($inicio) {
 
-                $minutos = $inicio->fecha_hora->diffInMinutes(now());
+                $segundos = $inicio->fecha_hora->diffInSeconds(now());
 
-                $texto .= "\n⏱ Duración del almuerzo: {$minutos} minutos";
+                $minutos = intdiv($segundos, 60);
+                $seg = $segundos % 60;
+
+                $texto .= "\n⏱ Duración del almuerzo: {$minutos} min {$seg} seg";
 
             }
 
