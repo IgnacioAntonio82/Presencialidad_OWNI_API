@@ -1275,12 +1275,12 @@ class TelegramWebhookController extends Controller
     {
         $botones = self::ESTADOS[$estado] ?? self::ESTADOS['sin_jornada'];
 
-        if (
-            $estado === 'salida' &&
-            $this->existeIngresoHoy($empleadoId)
-        ) {
-            $botones = [];
-        }
+        // if (
+        //     $estado === 'salida' &&
+        //     $this->existeIngresoHoy($empleadoId)
+        // ) {
+        //     $botones = [];
+        // }
 
         $keyboard = [];
 
@@ -1341,7 +1341,7 @@ class TelegramWebhookController extends Controller
 
             return [
                 'ok' => false,
-                'mensaje' => '⚠️ Ya registró el ingreso correspondiente al día de hoy.'
+                'mensaje' => '⚠️ La jornada de hoy ya fue registrada. Deberá esperar al próximo día para realizar un nuevo ingreso.'
             ];
         }
 
