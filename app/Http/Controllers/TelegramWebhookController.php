@@ -1422,137 +1422,81 @@ class TelegramWebhookController extends Controller
         $sucursalEmpleado = $this->obtenerSucursalActiva($empleado->id);
 
         if (!$sucursalEmpleado) {
-            return null;
+            return collect();
         }
 
         return EmpleadoHorario::with('horario')
-
             ->where('empresa_id', $empleado->empresa_id)
-
             ->where('empleado_id', $empleado->id)
-
             ->where('activo', true)
-
-            ->whereDate(
-                'vigente_desde',
-                '<=',
-                today()
-            )
-
+            ->whereDate('vigente_desde', '<=', today())
             ->where(function ($q) {
-
                 $q->whereNull('vigente_hasta')
-
-                ->orWhereDate(
-                        'vigente_hasta',
-                        '>=',
-                        today()
-                );
-
+                ->orWhereDate('vigente_hasta', '>=', today());
             })
-
             ->whereHas('horario', function ($q) use ($sucursalEmpleado) {
-
                 $q->where('activo', true)
                 ->where('sucursal_id', $sucursalEmpleado->sucursal_id);
-
             })
-
-            ->first();
+            ->get();
     }
 
 
 
     private function validarHorarioLaboral($empleado): array
     {
-        $empleadoHorario = $this->obtenerHorarioEmpleado( $empleado );
+        $empleadoHorarios = $this->obtenerHorarioEmpleado( $empleado );
 
-        if (!$empleadoHorario) {
+        
 
-            return [
-
-                'ok' => false,
-
-                'mensaje' => '❌ No posee un horario laboral asignado.'
-
-            ];
-
+        if ($empleadoHorarios->isEmpty()) {
+        return [
+            'ok' => false,
+            'mensaje' => '❌ No posee un horario laboral asignado.'
+        ];
         }
 
-        $horario = $empleadoHorario->horario;
-
-        /*
-        |--------------------------------------------------------------------------
-        | Día de la semana
-        |--------------------------------------------------------------------------
-        */
-
         $dias = [
-
             1 => 'lunes',
-
             2 => 'martes',
-
             3 => 'miercoles',
-
             4 => 'jueves',
-
             5 => 'viernes',
-
             6 => 'sabado',
-
             7 => 'domingo'
-
         ];
 
         $dia = $dias[now()->dayOfWeekIso];
 
-        if (!$horario->$dia) {
+        $horaActual = now()->format('H:i:s');
 
-            return [
+        foreach ($empleadoHorarios as $empleadoHorario) {
 
-                'ok' => false,
+            $horario = $empleadoHorario->horario;
 
-                'mensaje' => '❌ Hoy no posee una jornada laboral asignada.'
+            // Ese horario no trabaja este día
+            if (!$horario->$dia) {
+                continue;
+            }
 
-            ];
+            // Está dentro del rango horario
+            if (
+                $horaActual >= $horario->hora_ingreso &&
+                $horaActual <= $horario->hora_salida
+            ) 
+            {
 
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Horario laboral
-        |--------------------------------------------------------------------------
-        */
-
-        $horaActual = Carbon::now()->format('H:i:s');
-
-        if (           
-
-            $horaActual > $horario->hora_salida
-
-        ) {
-
-            return [
-
-                'ok' => false,
-
-               'mensaje' =>
-                    "❌ La marcación sólo puede realizarse hasta las "
-                    . substr($horario->hora_salida, 0, 5)
-
-            ];
-
+                return [
+                    'ok' => true,
+                    'horario' => $horario
+                ];
+            }
         }
 
         return [
-
-            'ok' => true,
-
-            'horario' => $horario
-
+            'ok' => false,
+            'mensaje' => '❌ Se encuentra fuera de su horario laboral.'
         ];
-
     }
 
 
