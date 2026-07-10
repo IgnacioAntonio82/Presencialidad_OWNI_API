@@ -467,44 +467,62 @@ class TelegramWebhookController extends Controller
 
             
 
-           if ($accion['tipo'] === 'salida') {
+        //    if ($accion['tipo'] === 'salida') {
 
-                $this->ocultarMenu(
+        //         $this->ocultarMenu(
 
-                    $chatId,
+        //             $chatId,
 
-                    $this->obtenerMensajeMarcacion(
-                        $accion['tipo'],
-                        $empleado,
-                        $sucursal?->sucursal
-                    )
+        //             $this->obtenerMensajeMarcacion(
+        //                 $accion['tipo'],
+        //                 $empleado,
+        //                 $sucursal?->sucursal
+        //             )
 
-                );
+        //         );
 
-            } else {
+        //     } else {
 
-                $this->sendMessage(
+        //         $this->sendMessage(
 
-                    $chatId,
+        //             $chatId,
 
-                    $this->obtenerMensajeMarcacion(
-                        $accion['tipo'],
-                        $empleado,
-                        $sucursal?->sucursal
-                    )
+        //             $this->obtenerMensajeMarcacion(
+        //                 $accion['tipo'],
+        //                 $empleado,
+        //                 $sucursal?->sucursal
+        //             )
 
-                );
+        //         );
 
-                $this->enviarMenu(
-                    $chatId,
-                    $empleado
-                );
+        //         $this->enviarMenu(
+        //             $chatId,
+        //             $empleado
+        //         );
 
-            }
-            return response()->json([
-                'ok' => true
-            ]);
+        //     }
+
+        if ($accion['tipo'] === 'salida') {
+
+            $this->sendMessage(
+                $chatId,
+                $this->obtenerMensajeMarcacion(
+                    $accion['tipo'],
+                    $empleado,
+                    $sucursal?->sucursal
+                )
+            );
+
+            $this->enviarMenu($chatId, $empleado);
+
+            return response()->json(['ok' => true]);
         }
+
+
+           
+        }
+
+        
 
                        
            
@@ -1253,42 +1271,26 @@ class TelegramWebhookController extends Controller
             ->first();
     }
 
-    private function crearKeyboard($estado)
+    private function crearKeyboard($estado, $empleadoId)
     {
-
         $botones = self::ESTADOS[$estado] ?? self::ESTADOS['sin_jornada'];
 
-            /*
-            |--------------------------------------------------------------------------
-            | Ya registró un ingreso hoy
-            |--------------------------------------------------------------------------
-            */
-
-            if (
-                $estado === 'salida' &&
-                $this->existeIngresoHoy($empleadoId)
-            ) {
-                $botones = [];
-            }
+        if (
+            $estado === 'salida' &&
+            $this->existeIngresoHoy($empleadoId)
+        ) {
+            $botones = [];
+        }
 
         $keyboard = [];
 
         foreach ($botones as $boton) {
-
             $keyboard[] = [
-
-                [
-
-                    'text' => $boton
-
-                ]
-
+                ['text' => $boton]
             ];
-
         }
 
         return $keyboard;
-
     }
 
     private function obtenerEstadoActual($empleadoId)
@@ -1547,7 +1549,7 @@ class TelegramWebhookController extends Controller
 
             'origen' => 'telegram',
 
-            'estado' => 'confirmada'
+            'estado' => 'pendiente'
 
         ]);
         
