@@ -502,21 +502,34 @@ class TelegramWebhookController extends Controller
 
         //     }
 
-        if ($accion['tipo'] === 'salida') {
+        // if ($accion['tipo'] === 'salida') {
 
-            $this->sendMessage(
-                $chatId,
-                $this->obtenerMensajeMarcacion(
-                    $accion['tipo'],
-                    $empleado,
-                    $sucursal?->sucursal
-                )
-            );
+        //     $this->sendMessage(
+        //         $chatId,
+        //         $this->obtenerMensajeMarcacion(
+        //             $accion['tipo'],
+        //             $empleado,
+        //             $sucursal?->sucursal
+        //         )
+        //     );
 
-            $this->enviarMenu($chatId, $empleado);
+        //     $this->enviarMenu($chatId, $empleado);
 
-            return response()->json(['ok' => true]);
-        }
+        //     return response()->json(['ok' => true]);
+        // }
+
+        $this->sendMessage(
+            $chatId,
+            $this->obtenerMensajeMarcacion(
+                $accion['tipo'],
+                $empleado,
+                $sucursal?->sucursal
+            )
+        );
+
+        $this->enviarMenu($chatId, $empleado);
+
+        return response()->json(['ok' => true]);
 
 
            
