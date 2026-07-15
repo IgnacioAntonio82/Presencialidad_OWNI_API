@@ -530,9 +530,23 @@ class TelegramWebhookController extends Controller
         $this->enviarMenu($chatId, $empleado);
 
         return response()->json(['ok' => true]);
-
-
            
+        }
+
+        if ($texto === '🔄 Refrescar') {
+
+            Cache::forget("marcacion:$chatId");
+
+            $this->sendMessage(
+                $chatId,
+                "🔄 Menú actualizado."
+            );
+
+            $this->enviarMenu($chatId, $empleado);
+
+            return response()->json([
+                'ok' => true
+            ]);
         }
 
         
@@ -1302,6 +1316,11 @@ class TelegramWebhookController extends Controller
                 ['text' => $boton]
             ];
         }
+
+         // Siempre mostrar el botón refrescar
+        $keyboard[] = [
+            ['text' => '🔄 Refrescar']
+        ];
 
         return $keyboard;
     }
